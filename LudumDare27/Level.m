@@ -39,3 +39,12 @@
 @implementation Guard
 @end
 
+
+@implementation NoiseMaker
+@end
+
+@implementation Light
+@end
+
+@implementation Staller
+@end

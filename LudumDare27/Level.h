@@ -6,17 +6,27 @@
 //  Copyright (c) 2013 Groucho. All rights reserved.
 //
 
+#import "GTMultiSpriteView.h"
 #import <Foundation/Foundation.h>
 
 @interface Level : NSObject
 
+@property (nonatomic, assign) int index;
 @property (nonatomic, strong) NSMutableArray *walls;
 @property (nonatomic, strong) NSMutableArray *guards;
-@property (nonatomic, strong) NSMutableArray *lures;
 @property (nonatomic, strong) NSMutableArray *lights;
 @property (nonatomic, strong) NSMutableArray *keys;
+@property (nonatomic, strong) NSMutableArray *noiseMakers;
+@property (nonatomic, strong) NSMutableArray *stallers;
 @property (nonatomic, assign) CGPoint kingStartPosition;
 
+@end
+
+
+@interface NoiseMaker : NSObject
+@property (nonatomic, assign) CGPoint location;
+@property (nonatomic, assign) GTMultiSpriteView *display;
+@property (nonatomic, assign) NSTimeInterval activateTime;
 @end
 
 
@@ -26,6 +36,7 @@
 @property (nonatomic, assign) CGPoint endPoint;
 @property (nonatomic, assign) BOOL vertical;
 @end
+
 
 @class Key;
 
@@ -37,7 +48,6 @@
 @end
 
 
-
 @interface Guard : NSObject
 @property (nonatomic, assign) CGPoint startPoint;
 @property (nonatomic, assign) CGPoint endPoint;
@@ -45,6 +55,19 @@
 @end
 
 
+@class KeyView;
+
 @interface Key : NSObject
+@property (nonatomic, assign) CGPoint location;
+@property (nonatomic, strong) KeyView *display;
+@end
+
+
+@interface Light : NSObject
+@property (nonatomic, assign) CGPoint location;
+@property (nonatomic, assign) CGRect zone;
+@end
+
+@interface Staller : NSObject
 @property (nonatomic, assign) CGPoint location;
 @end

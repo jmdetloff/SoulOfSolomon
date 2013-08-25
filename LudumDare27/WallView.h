@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+@class KeyView;
 @class Wall;
 @interface WallView : UIView
 
@@ -15,6 +16,6 @@
 @property (nonatomic, strong, readonly) NSArray *doorViews;
 
 - (id)initWithFrame:(CGRect)frame wall:(Wall *)wall;
-- (void)openDoor:(UIView *)door;
+- (void)gotKey:(KeyView *)key;
 
 @end

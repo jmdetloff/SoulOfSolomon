@@ -12,7 +12,7 @@
 @class DoorNode;
 
 @protocol PathFinderDelegate <NSObject>
-- (BOOL)nodeA:(DoorNode *)nodeA isAdjacentToNodeB:(DoorNode *)nodeB;
+- (BOOL)nodeA:(DoorNode *)nodeA isAdjacentToNodeB:(DoorNode *)nodeB locks:(BOOL)locks;
 @end
 
 
@@ -20,7 +20,7 @@
 
 @property (nonatomic, weak) id<PathFinderDelegate> delegate;
 
-- (NSMutableArray *)searchPathFromPoint:(CGPoint)initialPoint toPoint:(CGPoint)endPoint nodes:(NSArray *)doorNodes maxDepth:(int)depth;
+- (NSMutableArray *)searchPathFromPoint:(CGPoint)initialPoint toPoint:(CGPoint)endPoint nodes:(NSArray *)doorNodes maxDepth:(int)depth locks:(BOOL)locks;
 
 @end
 

@@ -16,7 +16,7 @@
 @interface GuardView : DoorNavigatingView
 
 - (id)initWithGuard:(Guard *)guard delegate:(id<GuardMoveDelegate>)delegate;
-- (void)beLuredToLocation:(CGPoint)location;
+- (void)beLuredToLocation:(CGPoint)location distance:(int)distance;
 - (BOOL)tryToSpot:(CGPoint)location;
 
 @end

@@ -77,7 +77,7 @@
 
 - (BOOL)attemptToSetDestination:(CGPoint)attemptedDestination maxDepth:(int)maxDepth {
     CGPoint intermediary;
-    BOOL canReach = [self.delegate canReachDest:attemptedDestination fromLocation:self.center maxDepth:maxDepth nextLoc:&intermediary];
+    BOOL canReach = [self.delegate navigatingView:self canReachDest:attemptedDestination fromLocation:self.center maxDepth:maxDepth nextLoc:&intermediary];
     if (canReach) {
         _finalDestination = attemptedDestination;
         self.currentDestination = intermediary;

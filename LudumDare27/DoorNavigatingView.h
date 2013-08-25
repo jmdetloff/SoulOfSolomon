@@ -12,7 +12,7 @@
 @class DoorNavigatingView;
 
 @protocol GuardMoveDelegate <NSObject>
-- (BOOL)canReachDest:(CGPoint)dest fromLocation:(CGPoint)loc maxDepth:(int)maxDepth nextLoc:(CGPoint *)nextLoc;
+- (BOOL)navigatingView:(DoorNavigatingView *)view canReachDest:(CGPoint)dest fromLocation:(CGPoint)loc maxDepth:(int)maxDepth nextLoc:(CGPoint *)nextLoc;
 - (void)navigatingView:(DoorNavigatingView *)view reachedIntermediaryDestination:(CGPoint)dest nextDest:(CGPoint)nextDest;
 - (void)navigatingView:(DoorNavigatingView *)view reachedFinalDestination:(CGPoint)dest;
 @end

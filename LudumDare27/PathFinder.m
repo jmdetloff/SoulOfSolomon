@@ -11,7 +11,7 @@
 @implementation PathFinder
 
 
-- (NSMutableArray *)searchPathFromPoint:(CGPoint)initialPoint toPoint:(CGPoint)endPoint nodes:(NSArray *)doorNodes maxDepth:(int)depth {
+- (NSMutableArray *)searchPathFromPoint:(CGPoint)initialPoint toPoint:(CGPoint)endPoint nodes:(NSArray *)doorNodes maxDepth:(int)depth locks:(BOOL)locks {
 
     NSMutableArray *queue = [doorNodes mutableCopy];
     
@@ -33,7 +33,7 @@
 
     [queue addObject:finalNode];
     
-    BOOL found = [self searchFromNode:initialNode unvisited:queue finalNode:finalNode];
+    BOOL found = [self searchFromNode:initialNode unvisited:queue finalNode:finalNode locks:locks];
     
     if (finalNode.distance > depth || !found) {
         return nil;
@@ -53,12 +53,12 @@
 }
 
 
-- (BOOL)searchFromNode:(DoorNode *)currentNode unvisited:(NSMutableArray *)unvisited finalNode:(DoorNode *)finalNode {
+- (BOOL)searchFromNode:(DoorNode *)currentNode unvisited:(NSMutableArray *)unvisited finalNode:(DoorNode *)finalNode locks:(BOOL)locks{
     if (currentNode == finalNode) {
         return YES;
     }
     
-    NSArray *adjacents = [self adjacentNodes:currentNode fromNodes:unvisited];
+    NSArray *adjacents = [self adjacentNodes:currentNode fromNodes:unvisited locks:locks];
     
     for (DoorNode *node in adjacents) {
         double distance = sqrt(pow((node.location.x - currentNode.location.x), 2.0) + pow((node.location.y - currentNode.location.y), 2.0));
@@ -78,15 +78,15 @@
     }
     [unvisited removeObject:nextNodeToVisit];
     
-    return [self searchFromNode:nextNodeToVisit unvisited:unvisited finalNode:finalNode];
+    return [self searchFromNode:nextNodeToVisit unvisited:unvisited finalNode:finalNode locks:locks];
 }
 
 
-- (NSMutableArray *)adjacentNodes:(DoorNode *)nodeA fromNodes:(NSArray *)otherNodes {
+- (NSMutableArray *)adjacentNodes:(DoorNode *)nodeA fromNodes:(NSArray *)otherNodes locks:(BOOL)locks {
     NSMutableArray *adjacents = [NSMutableArray array];
     
     for (DoorNode *node in otherNodes) {
-        if ([_delegate nodeA:nodeA isAdjacentToNodeB:node]) {
+        if ([_delegate nodeA:nodeA isAdjacentToNodeB:node locks:locks]) {
             [adjacents addObject:node];
         }
     }

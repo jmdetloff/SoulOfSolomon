@@ -26,7 +26,7 @@ typedef enum {
 @property (nonatomic, assign) GuardDirection direction;
 @end
 
-static const CGFloat SIGHT_ARC = M_PI/2.5;
+static const CGFloat SIGHT_ARC = M_PI/2.2;
 static const int SIGHT_RANGE = 190;
 
 @implementation GuardView {
@@ -36,6 +36,7 @@ static const int SIGHT_RANGE = 190;
     CGPoint _finalDestination;
     UIImageView *_sightImageView;
     GTMultiSpriteView *_sprite;
+    BOOL _animMoving;
 }
 
 static NSString * const kGuardIdleFrontKey = @"kGuardIdleFrontKey";
@@ -114,9 +115,9 @@ static NSString * const kGuardWalkSideKey = @"kGuardWalkSideKey";
 
 
 - (void)updateAnimation {
-    BOOL moving = !(CGPointEqualToPoint(_guard.startPoint, _guard.endPoint) && CGPointEqualToPoint(_guard.startPoint, self.center)) && !self.paused;
+    _animMoving = !(CGPointEqualToPoint(_guard.startPoint, _guard.endPoint) && CGPointEqualToPoint(_guard.startPoint, self.center)) && !self.paused;
     
-    if (moving) {
+    if (_animMoving) {
         switch (_direction) {
             case Up:
                 [_sprite setAnimationToAnimationWithKey:kGuardWalkBackKey];
@@ -166,6 +167,10 @@ static NSString * const kGuardWalkSideKey = @"kGuardWalkSideKey";
         [super move:moveTime];
     }
     
+    if (!_animMoving) {
+        [self updateAnimation];
+    }
+    
     if (_sightAngle != self.currentAngle) {
         
         CGFloat diff1 = self.currentAngle - _sightAngle;
@@ -191,8 +196,8 @@ static NSString * const kGuardWalkSideKey = @"kGuardWalkSideKey";
 }
 
 
-- (void)beLuredToLocation:(CGPoint)location {
-    if ([self attemptToSetDestination:location maxDepth:500]) {
+- (void)beLuredToLocation:(CGPoint)location distance:(int)distance {
+    if ([self attemptToSetDestination:location maxDepth:distance]) {
         self.patrolling = NO;
     }
 }
@@ -268,28 +273,20 @@ static NSString * const kGuardWalkSideKey = @"kGuardWalkSideKey";
 
 
 - (UIImage *)viewRangeImage:(BOOL)caught {
-    CGPoint p1 = CGPointMake(SIGHT_RANGE * cos(M_PI/2 - SIGHT_ARC/2), SIGHT_RANGE * sin(M_PI/2 - SIGHT_ARC/2));
-    CGPoint p2 = CGPointMake(SIGHT_RANGE * cos(M_PI/2 + SIGHT_ARC/2), SIGHT_RANGE * sin(M_PI/2 + SIGHT_ARC/2));
+    CGFloat startAngle = M_PI/2 - SIGHT_ARC/2;
+    CGFloat endAngle = M_PI/2 + SIGHT_ARC/2;
     
-    int width = p1.x - p2.x;
-    p1.x += width/2;
-    p2.x += width/2;
-    
-    int height = fabsf(p1.y);
-    p1.y += height;
-    p2.y += height;
-    
-    CGPoint p0 = CGPointMake(width/2, height);
+    int width = SIGHT_RANGE*1.5;
+    CGPoint p0 = CGPointMake(width/2, SIGHT_RANGE);
     
     UIBezierPath *path = [UIBezierPath bezierPath];
     [path moveToPoint:p0];
-    [path addLineToPoint:p1];
-    [path addLineToPoint:p2];
+    [path addArcWithCenter:p0 radius:SIGHT_RANGE startAngle:startAngle endAngle:endAngle clockwise:YES];
     [path addLineToPoint:p0];
     
     UIImage *glyphImage;
     
-    UIGraphicsBeginImageContext(CGSizeMake(width, height*2));
+    UIGraphicsBeginImageContext(CGSizeMake(width, SIGHT_RANGE*2));
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(context, (caught ? [[UIColor redColor] colorWithAlphaComponent:0.2].CGColor : [[UIColor blueColor] colorWithAlphaComponent:0.2].CGColor));
     

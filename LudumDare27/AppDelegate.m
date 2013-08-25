@@ -21,13 +21,19 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    Level *level = [LevelGenerator getLevel:1];
+    [self loadLevelNum:2];
     
-    self.window.rootViewController = [[GameViewController alloc] initWithLevel:level];
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
 }
+
+
+- (void)loadLevelNum:(int)levelNum {
+    Level *level = [LevelGenerator getLevel:levelNum];
+    self.window.rootViewController = [[GameViewController alloc] initWithLevel:level];
+}
+
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
