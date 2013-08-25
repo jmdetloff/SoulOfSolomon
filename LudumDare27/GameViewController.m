@@ -39,7 +39,7 @@
     BOOL _spiritMode;
     BOOL _flewAway;
     
-    DoorNavigatingView *_spiritView;
+    SpiritView *_spiritView;
     
     UIButton *_spiritButton;
     
@@ -378,6 +378,10 @@
     _spiritView.center = _kingBody.center;
     [_spiritView attemptToSetDestination:_kingBody.center maxDepth:INFINITY];
     _spiritView.hidden = NO;
+    
+    _spiritView.facingLeft = NO;
+    _spiritView.facingUp = NO;
+    _spiritView.moving = NO;
 }
 
 
@@ -412,6 +416,9 @@
     } else {
         if (!CGPointEqualToPoint(_spiritView.center, loc)) {
             [_spiritView attemptToSetDestination:loc maxDepth:INFINITY];
+            _spiritView.moving = YES;
+            _spiritView.facingLeft =_spiritView.currentDestination.x < _spiritView.center.x;
+            _spiritView.facingUp = _spiritView.currentDestination.y < _spiritView.center.y;
         }
     }
 
@@ -434,9 +441,14 @@
 
 - (void)navigatingView:(DoorNavigatingView *)view reachedIntermediaryDestination:(CGPoint)dest nextDest:(CGPoint)nextDest {
     if (view == _kingBody) {
-            _kingBody.moving = YES;
-            _kingBody.facingLeft = nextDest.x < _kingBody.center.x;
-            _kingBody.facingUp = nextDest.y < _kingBody.center.y;
+        _kingBody.moving = YES;
+        _kingBody.facingLeft = nextDest.x < _kingBody.center.x;
+        _kingBody.facingUp = nextDest.y < _kingBody.center.y;
+    }
+    if (view == _spiritView) {
+        _spiritView.moving = YES;
+        _spiritView.facingLeft = nextDest.x < _spiritView.center.x;
+        _spiritView.facingUp = nextDest.y < _spiritView.center.y;
     }
 }
 
@@ -444,7 +456,10 @@
 - (void)navigatingView:(DoorNavigatingView *)view reachedFinalDestination:(CGPoint)dest {
     if (view == _kingBody) {
         _kingBody.moving = NO;
-    } 
+    }
+    if (view == _spiritView) {
+        _spiritView.moving = NO;
+    }
 }
 
 

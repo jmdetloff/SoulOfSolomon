@@ -10,4 +10,8 @@
 
 @interface SpiritView : DoorNavigatingView
 
+@property (nonatomic, assign) BOOL facingUp;
+@property (nonatomic, assign) BOOL facingLeft;
+@property (nonatomic, assign) BOOL moving;
+
 @end
