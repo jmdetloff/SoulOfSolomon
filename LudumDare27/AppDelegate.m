@@ -6,7 +6,10 @@
 //  Copyright (c) 2013 Groucho. All rights reserved.
 //
 
+#import "Level.h"
+#import "LevelGenerator.h"
 #import "AppDelegate.h"
+#import "GameViewController.h"
 
 @implementation AppDelegate
 
@@ -17,7 +20,10 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
+    
+    Level *level = [LevelGenerator getLevel:1];
+    
+    self.window.rootViewController = [[GameViewController alloc] initWithLevel:level];
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
