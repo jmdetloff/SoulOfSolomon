@@ -24,7 +24,28 @@
         _doorViews = [[NSMutableArray alloc] init];
         
         self.clipsToBounds = NO;
-        self.backgroundColor = [UIColor brownColor];
+        
+        if (wall.vertical) {
+            self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"vert_wall_full"]];
+
+//            if (frame.origin.y + frame.size.height != 748) {
+                UIImageView *frontCap = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"vert_wall_endfront"]];
+                frontCap.frame = CGRectMake(0, frame.size.height - frontCap.frame.size.height, frontCap.frame.size.width, frontCap.frame.size.height);
+                [self addSubview:frontCap];
+//            }
+
+            UIImageView *backCap = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"vert_wall_endback"]];
+            [self addSubview:backCap];
+        } else {
+            self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"horz_wall_full"]];
+            
+            UIImageView *rightCap = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"horz_wall_endright"]];
+            rightCap.frame = CGRectMake(frame.size.width - rightCap.frame.size.width, 0, rightCap.frame.size.width, rightCap.frame.size.height);
+            [self addSubview:rightCap];
+            
+            UIImageView *leftCap = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"horz_wall_endleft"]];
+            [self addSubview:leftCap];
+        }
         
         for (Door *door in wall.doors) {
             UIImageView *doorView = [[UIImageView alloc] init];

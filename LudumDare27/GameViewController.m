@@ -49,20 +49,35 @@
     _finder.delegate = self;
     
     for (Wall *wall in _level.walls) {
-        CGRect wallFrame = CGRectMake(wall.startPoint.x,
-                                      wall.startPoint.y,
-                                      MAX(2, (wall.endPoint.x - wall.startPoint.x)),
-                                      MAX(2, (wall.endPoint.y - wall.startPoint.y)));
+
+        CGRect wallFrame;
+        if (wall.vertical) {
+            CGFloat xStart = wall.startPoint.x - 16;
+            CGFloat yStart = wall.startPoint.y;
+            
+            wallFrame = CGRectMake(xStart, yStart, 32, (wall.endPoint.y - wall.startPoint.y));
+        } else {
+            
+            BOOL leftWall = wall.startPoint.x != 0;
+            BOOL rightWall = wall.endPoint.x != 1024;
+            
+            CGFloat xStart = wall.startPoint.x + (leftWall ? 16 : 0);
+            CGFloat width = wall.endPoint.x - wall.startPoint.x - (leftWall ? 16 : 0) - (rightWall ? 16 : 0);
+            
+            wallFrame = CGRectMake(xStart, wall.startPoint.y - 48, width, 96);
+        }
         
         WallView *wallView = [[WallView alloc] initWithFrame:wallFrame wall:wall];
         [_wallViews addObject:wallView];
         
         [wallView.doorViews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            UIView *doorView = (UIView *)obj;
-            
             DoorNode *node = [[DoorNode alloc] init];
             node.door = [wall.doors objectAtIndex:idx];
-            node.location = [self.view convertPoint:doorView.center fromView:wallView];
+            
+            CGPoint doorLocation = (wall.vertical ? CGPointMake(wall.startPoint.x, wall.startPoint.y + (wall.endPoint.y - wall.startPoint.y)*node.door.location/100)
+                                    : CGPointMake(wall.startPoint.x + (wall.endPoint.x - wall.startPoint.x)*node.door.location/100, wall.startPoint.y));
+            
+            node.location = doorLocation;
             node.wall = wall;
             [_doorNodes addObject:node];
         }];
@@ -77,6 +92,12 @@
     }
     
     _timer = [NSTimer scheduledTimerWithTimeInterval:(0.02) target:self selector:@selector(move) userInfo:nil repeats:YES];
+    
+    _kingBody = [[KingView alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
+    _kingBody.delegate = self;
+    _kingBody.center = _level.kingStartPosition;
+    [_kingBody attemptToSetDestination:_level.kingStartPosition maxDepth:INFINITY];
+    [self.view addSubview:_kingBody];
     
     for (GuardView *view in _guardViews) {
         [self.view addSubview:view];
@@ -101,11 +122,7 @@
  
     _gottenKeys = [[NSMutableArray alloc] init];
     
-    _kingBody = [[KingView alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
-    _kingBody.delegate = self;
-    _kingBody.center = _level.kingStartPosition;
-    [_kingBody attemptToSetDestination:_level.kingStartPosition maxDepth:INFINITY];
-    [self.view addSubview:_kingBody];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"stone_floor"]];
 }
 
 
@@ -163,13 +180,18 @@
 
 - (void)navigatingView:(DoorNavigatingView *)view reachedIntermediaryDestination:(CGPoint)dest nextDest:(CGPoint)nextDest {
     for (WallView *wallView in _wallViews) {
-        for (UIView *doorView in wallView.doorViews) {
-            CGPoint doorLocation = [self.view convertPoint:doorView.center fromView:wallView];
+        Wall *wall = wallView.wall;
+        [wallView.doorViews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            UIView *doorView = (UIView *)obj;
+            Door *door = wall.doors[idx];
+            
+            CGPoint doorLocation = (wall.vertical ? CGPointMake(wall.startPoint.x, wall.startPoint.y + (wall.endPoint.y - wall.startPoint.y)*door.location/100)
+                                    : CGPointMake(wall.startPoint.x + (wall.endPoint.x - wall.startPoint.x)*door.location/100, wall.startPoint.y));
             if (CGPointEqualToPoint(doorLocation, dest)) {
                 [wallView openDoor:doorView];
-                break;
+                *stop = YES;
             }
-        }
+        }];
     }
     
     if (view == _kingBody) {
