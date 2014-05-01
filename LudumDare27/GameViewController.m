@@ -15,6 +15,9 @@
 #import "SpiritView.h"
 #import "KeyView.h"
 #import "AppDelegate.h"
+#import "LightView.h"
+#import "BellView.h"
+#import "CoinViews.h"
 
 
 @interface GameViewController () <GuardMoveDelegate, PathFinderDelegate>
@@ -34,7 +37,8 @@
     NSMutableArray *_noiseMakerViews;
     NSMutableArray *_lightViews;
     NSMutableArray *_darkViews;
-    NSMutableArray *_stallViews;
+    NSMutableArray *_coinViews;
+    NSMutableArray *_bigCoinViews;
     
     BOOL _spiritMode;
     BOOL _flewAway;
@@ -47,6 +51,7 @@
     UIView *_onLight;
     
     UIAlertView *_loseAlertView;
+    UIAlertView *_winAlertView;
     
     BOOL _debug;
     
@@ -145,11 +150,11 @@
     
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"stone_floor"]];
     
-    _spiritButton = [[UIButton alloc] initWithFrame:CGRectMake(930, 748-20-50, 75, 50)];
+    _spiritButton = [[UIButton alloc] initWithFrame:CGRectMake(925, 5, 75, 50)];
     _spiritButton.backgroundColor = [UIColor whiteColor];
-    [_spiritButton setTitle:@"spirit" forState:UIControlStateNormal];
+    [_spiritButton setTitle:@"10" forState:UIControlStateNormal];
     [_spiritButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [_spiritButton addTarget:self action:@selector(spiritModeActivate) forControlEvents:UIControlEventTouchUpInside];
+//    [_spiritButton addTarget:self action:@selector(spiritModeActivate) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_spiritButton];
     
     _spiritView = [[SpiritView alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
@@ -162,7 +167,7 @@
     [_level.noiseMakers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         NoiseMaker *maker = (NoiseMaker *)obj;
         
-        UIView *makerView = maker.display;
+        BellView *makerView = maker.display;
         makerView.center = maker.location;
         [self.view addSubview:makerView];
         
@@ -173,9 +178,8 @@
     _darkViews = [[NSMutableArray alloc] init];
     
     for (Light *light in _level.lights) {
-        UIView *lightView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+        LightView *lightView = [[LightView alloc] initWithFrame:CGRectMake(0, 0, 64, 64)];
         lightView.center = light.location;
-        lightView.backgroundColor = [UIColor orangeColor];
         [self.view addSubview:lightView];
         
         UIView *darkView = [[UIView alloc] initWithFrame:light.zone];
@@ -187,24 +191,31 @@
         [_darkViews addObject:darkView];
     }
     
-    _stallViews = [[NSMutableArray alloc] init];
-    
-    for (Staller *staller in _level.stallers) {
-        UIView *stallview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-        stallview.backgroundColor = [UIColor redColor];
-        stallview.center = staller.location;
-        [self.view addSubview:stallview];
-        
-        [_stallViews addObject:stallview];
-    }
+    _coinViews = [[NSMutableArray alloc] init];
     
     for (WallView *view in _wallViews) {
         [self.view addSubview:view];
     }
     
-    _debug = YES;
+    UILongPressGestureRecognizer *recognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(spiritModeActivate:)];
+    [self.view addGestureRecognizer:recognizer];
+    
+    _bigCoinViews = [[NSMutableArray alloc] init];
+    for (int i = 0; i < _level.numCoins; i++) {
+        [self addCoinView];
+    }
+    
+    _debug = NO;
 }
 
+
+- (void)addCoinView {
+    UIImageView *bigCoin = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"coin_big"]];
+    bigCoin.center = CGPointMake(890 - [_bigCoinViews count]*60, 33);
+    [self.view addSubview:bigCoin];
+    
+    [_bigCoinViews addObject:bigCoin];
+}
 
 #pragma mark -
 
@@ -212,6 +223,11 @@
 - (void)move {
     [_kingBody move:0.02];
     [_spiritView move:0.02];
+    
+    if (CGRectContainsPoint(_level.winZone, _kingBody.center)) {
+        [self win];
+        return;
+    }
     
     __block BOOL kingInDark = NO;
     [_darkViews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -240,11 +256,12 @@
         }
         
         [_lightViews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            UIView *lightView = (UIView *)obj;
+            LightView *lightView = (LightView *)obj;
             double distance = sqrt(pow((gv.center.x - lightView.center.x), 2.0) + pow((gv.center.y - lightView.center.y), 2.0));
             if (distance < 30) {
                 UIView *darkView = _darkViews[idx];
                 darkView.hidden = YES;
+                [lightView setLit:YES];
             }
         }];
         
@@ -257,14 +274,19 @@
                 _loseAlertView = [[UIAlertView alloc] initWithTitle:@"You've been spotted!" message:@"A traitorous houndbeast tears you royal limb from limb." delegate:self cancelButtonTitle:@"Try again?" otherButtonTitles:nil, nil];
                 [_loseAlertView show];
                 [_timer invalidate];
+                [_spiritTimer invalidate];
             }
         }
         
-        for (UIView *stallView in _stallViews) {
+        NSMutableArray *removedCoins = [NSMutableArray array];
+        
+        for (UIView *stallView in _coinViews) {
             double distance = sqrt(pow((gv.center.x - stallView.center.x), 2.0) + pow((gv.center.y - stallView.center.y), 2.0));
-            if (distance < 30 && stallView.tag == 1) {
-                stallView.tag = 0;
+            if (distance < 45) {
                 gv.paused = YES;
+                [stallView removeFromSuperview];
+                [removedCoins addObject:stallView];
+                [self addCoinView];
                 double delayInSeconds = 1.5;
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
@@ -272,6 +294,8 @@
                 });
             }
         }
+        
+        [_coinViews removeObjectsInArray:removedCoins];
     }
     
     if (_spiritMode) {
@@ -279,16 +303,16 @@
         if (distance < 30 && _flewAway) {
             _spiritMode = NO;
             _spiritView.hidden = YES;
-            _spiritButton.enabled = YES;
-            [_spiritButton setTitle:@"spirit" forState:UIControlStateNormal];
+            [_spiritButton setTitle:@"10" forState:UIControlStateNormal];
             [_spiritTimer invalidate];
+            [_kingBody goSoulless:NO];
         } else if (distance > 30) {
             _flewAway = YES;
         }
         
         __block BOOL onAnyMaker = NO;
         [_noiseMakerViews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            UIView *makerView = (UIView *)obj;
+            BellView *makerView = (BellView *)obj;
             double distance = sqrt(pow((_spiritView.center.x - makerView.center.x), 2.0) + pow((_spiritView.center.y - makerView.center.y), 2.0));
             if (distance < 30) {
                 onAnyMaker = YES;
@@ -297,6 +321,7 @@
                     return;
                 }
                 _onMaker = maker;
+                [makerView ring];
                 if (maker.activateTime > 0) {
                     double delayInSeconds = maker.activateTime;
                     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
@@ -315,7 +340,7 @@
         
         __block BOOL onAnyLight = NO;
         [_lightViews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            UIView *lightView = (UIView *)obj;
+            LightView *lightView = (LightView *)obj;
             double distance = sqrt(pow((_spiritView.center.x - lightView.center.x), 2.0) + pow((_spiritView.center.y - lightView.center.y), 2.0));
             if (distance < 30) {
                 onAnyLight = YES;
@@ -325,6 +350,7 @@
                 _onLight = lightView;
                 UIView *darkView = _darkViews[idx];
                 darkView.hidden = NO;
+                [lightView setLit:NO];
             }
         }];
         
@@ -332,12 +358,17 @@
             _onLight = nil;
         }
         
-        for (UIView *stallView in _stallViews) {
-            double distance = sqrt(pow((_spiritView.center.x - stallView.center.x), 2.0) + pow((_spiritView.center.y - stallView.center.y), 2.0));
-            if (distance < 30) {
-                stallView.tag = 1;
+        NSMutableArray *removedCoins = [NSMutableArray array];
+        for (CoinViews *coin in _coinViews) {
+            double distance = sqrt(pow((coin.center.x - _spiritView.center.x), 2.0) + pow((coin.center.y - _spiritView.center.y), 2.0));
+            if (distance < 30 && coin.tag == 0) {
+                [removedCoins addObject:coin];
+                [coin removeFromSuperview];
+                [self addCoinView];
             }
         }
+        [_coinViews removeObjectsInArray:removedCoins];
+        
         
     } else {
         for (KeyView *keyView in _keyViews) {
@@ -350,6 +381,27 @@
                     [wallView gotKey:keyView];
                 }
             }
+        }
+        for (WallView *wallView in _wallViews) {
+            if (CGRectIntersectsRect(wallView.frame, _kingBody.frame)) {
+                if (CGRectGetMaxY(wallView.frame) > CGRectGetMaxY(_kingBody.frame)) {
+                    [self.view insertSubview:wallView aboveSubview:_kingBody];
+                } else {
+                    [self.view insertSubview:wallView belowSubview:_kingBody];
+                }
+            }
+        }
+    }
+    
+    for (CoinViews *coin in _coinViews) {
+        if (!_spiritMode) {
+            coin.tag = 0;
+            continue;
+        }
+        
+        double distance = sqrt(pow((coin.center.x - _spiritView.center.x), 2.0) + pow((coin.center.y - _spiritView.center.y), 2.0));
+        if (distance > 30) {
+            coin.tag = 0;
         }
     }
 }
@@ -365,7 +417,11 @@
 #pragma mark -
 
 
-- (void)spiritModeActivate {
+- (void)spiritModeActivate:(UIGestureRecognizer *)recognizer {
+    if (_spiritMode) return;
+    
+    CGPoint location = [recognizer locationInView:self.view];
+    
     _spiritTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(spiritCount) userInfo:nil repeats:YES];
     _spiritCount = 10;
     
@@ -382,6 +438,14 @@
     _spiritView.facingLeft = NO;
     _spiritView.facingUp = NO;
     _spiritView.moving = NO;
+    
+    [_kingBody attemptToSetDestination:_kingBody.center maxDepth:INFINITY];
+    [_kingBody goSoulless:YES];
+    
+    [_spiritView attemptToSetDestination:location maxDepth:INFINITY];
+    _spiritView.moving = YES;
+    _spiritView.facingLeft =_spiritView.currentDestination.x < _spiritView.center.x;
+    _spiritView.facingUp = _spiritView.currentDestination.y < _spiritView.center.y;
 }
 
 
@@ -414,7 +478,20 @@
             _kingBody.facingUp = _kingBody.currentDestination.y < _kingBody.center.y;
         }
     } else {
-        if (!CGPointEqualToPoint(_spiritView.center, loc)) {
+        
+        CGPoint coinPoint = CGPointMake(_spiritView.center.x, _spiritView.center.y - _spiritView.frame.size.height/2);
+        double distance = sqrt(pow((loc.x - coinPoint.x), 2.0) + pow((loc.y - coinPoint.y), 2.0));
+        if (distance < 40 && [_bigCoinViews count] > 0) {
+            CoinViews *coin = [[CoinViews alloc] initWithFrame:CGRectMake(0, 0, 16, 16)];
+            coin.center = loc;
+            coin.tag = 1;
+            [self.view insertSubview:coin atIndex:0];
+            [_coinViews addObject:coin];
+            
+            [[_bigCoinViews lastObject] removeFromSuperview];
+            [_bigCoinViews removeLastObject];
+            
+        } else {
             [_spiritView attemptToSetDestination:loc maxDepth:INFINITY];
             _spiritView.moving = YES;
             _spiritView.facingLeft =_spiritView.currentDestination.x < _spiritView.center.x;
@@ -423,7 +500,7 @@
     }
 
     
-    NSLog(@"%f %f", loc.x, loc.y);
+//    NSLog(@"%f %f", loc.x, loc.y);
     
 //    for (GuardView *guardView in _guardViews) {
 //        [guardView beLuredToLocation:loc];
@@ -549,6 +626,19 @@ BOOL get_line_intersection(CGFloat p0_x, CGFloat p0_y, CGFloat p1_x, CGFloat p1_
         AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         [delegate loadLevelNum:_level.index];
     }
+    
+    if (alertView == _winAlertView) {
+        AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        [delegate loadLevelNum:_level.index + 1];
+    }
+}
+
+- (void)win {
+    [_timer invalidate];
+    [_spiritTimer invalidate];
+    
+    _winAlertView = [[UIAlertView alloc] initWithTitle:@"Congrats!" message:@"You've escaped the grasping claws of the traitor houndmen, for now...." delegate:self cancelButtonTitle:@"Next Level" otherButtonTitles:nil, nil];
+    [_winAlertView show];
 }
 
 @end

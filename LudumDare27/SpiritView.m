@@ -98,5 +98,18 @@ static NSString * const kSoulRunDownKey = @"kSoulRunDownKey";
 
 
 
+- (void)setCenter:(CGPoint)center {
+    center.y -= self.frame.size.height/2;
+    [super setCenter:center];
+}
+
+
+- (CGPoint)center {
+    CGPoint point = [super center];
+    point.y += self.frame.size.height/2;
+    return point;
+}
+
+
 
 @end

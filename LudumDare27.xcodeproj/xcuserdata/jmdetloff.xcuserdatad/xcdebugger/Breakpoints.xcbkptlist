@@ -112,11 +112,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "LudumDare27/KingView.m"
-         timestampString = "399098170.589"
+         timestampString = "399168086.770673"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "67"
-         endingLineNumber = "67"
+         startingLineNumber = "79"
+         endingLineNumber = "79"
          landmarkName = "-setFacingLeft:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -125,11 +125,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "LudumDare27/KingView.m"
-         timestampString = "399098179.881732"
+         timestampString = "399168086.770673"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "88"
-         endingLineNumber = "88"
+         startingLineNumber = "100"
+         endingLineNumber = "100"
          landmarkName = "-setMoving:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -177,11 +177,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "LudumDare27/GameViewController.m"
-         timestampString = "399120842.090788"
+         timestampString = "399182530.095888"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "98"
-         endingLineNumber = "98"
+         startingLineNumber = "103"
+         endingLineNumber = "103"
          landmarkName = "-viewDidLoad"
          landmarkType = "5">
       </FileBreakpoint>
@@ -190,12 +190,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "LudumDare27/GameViewController.m"
-         timestampString = "399158061.14105"
+         timestampString = "399182530.095888"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "378"
-         endingLineNumber = "378"
-         landmarkName = "-spiritModeActivate"
+         startingLineNumber = "434"
+         endingLineNumber = "434"
+         landmarkName = "-spiritModeActivate:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -208,7 +208,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "200"
          endingLineNumber = "200"
-         landmarkName = "-beLuredToLocation:"
+         landmarkName = "-beLuredToLocation:distance:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -216,50 +216,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "LudumDare27/GameViewController.m"
-         timestampString = "399158061.14105"
+         timestampString = "399182530.095888"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "338"
-         endingLineNumber = "338"
-         landmarkName = "-move"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "LudumDare27/GameViewController.m"
-         timestampString = "399158061.14105"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "267"
-         endingLineNumber = "267"
-         landmarkName = "-move"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "LudumDare27/GameViewController.m"
-         timestampString = "399159564.578731"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "395"
-         endingLineNumber = "395"
-         landmarkName = "-spiritCount"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "LudumDare27/GameViewController.m"
-         timestampString = "399158061.14105"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "349"
-         endingLineNumber = "349"
+         startingLineNumber = "286"
+         endingLineNumber = "286"
          landmarkName = "-move"
          landmarkType = "5">
       </FileBreakpoint>
@@ -281,12 +242,77 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "LudumDare27/KingView.m"
-         timestampString = "399159674.481619"
+         timestampString = "399168086.770673"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "80"
-         endingLineNumber = "80"
+         startingLineNumber = "92"
+         endingLineNumber = "92"
          landmarkName = "-setFacingUp:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "LudumDare27/GameViewController.m"
+         timestampString = "399182530.095888"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "308"
+         endingLineNumber = "308"
+         landmarkName = "-move"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "LudumDare27/GameViewController.m"
+         timestampString = "399182530.095888"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "521"
+         endingLineNumber = "521"
+         landmarkName = "-navigatingView:reachedIntermediaryDestination:nextDest:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "LudumDare27/GameViewController.m"
+         timestampString = "399182530.095888"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "387"
+         endingLineNumber = "387"
+         landmarkName = "-move"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "LudumDare27/GameViewController.m"
+         timestampString = "399182530.095888"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "485"
+         endingLineNumber = "485"
+         landmarkName = "-touchesEnded:withEvent:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "LudumDare27/GameViewController.m"
+         timestampString = "399182921.672316"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "631"
+         endingLineNumber = "631"
+         landmarkName = "-alertView:didDismissWithButtonIndex:"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

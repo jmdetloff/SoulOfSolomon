@@ -14,6 +14,7 @@
 
 @property (nonatomic, strong, readonly) Wall *wall;
 @property (nonatomic, strong, readonly) NSArray *doorViews;
+@property (nonatomic, strong, readonly) UIView *upperView;
 
 - (id)initWithFrame:(CGRect)frame wall:(Wall *)wall;
 - (void)gotKey:(KeyView *)key;

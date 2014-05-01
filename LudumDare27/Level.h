@@ -17,15 +17,18 @@
 @property (nonatomic, strong) NSMutableArray *lights;
 @property (nonatomic, strong) NSMutableArray *keys;
 @property (nonatomic, strong) NSMutableArray *noiseMakers;
-@property (nonatomic, strong) NSMutableArray *stallers;
+//@property (nonatomic, strong) NSMutableArray *stallers;
 @property (nonatomic, assign) CGPoint kingStartPosition;
+@property (nonatomic, assign) int numCoins;
+@property (nonatomic, assign) CGRect winZone;
 
 @end
 
+@class BellView;
 
 @interface NoiseMaker : NSObject
 @property (nonatomic, assign) CGPoint location;
-@property (nonatomic, assign) GTMultiSpriteView *display;
+@property (nonatomic, assign) BellView *display;
 @property (nonatomic, assign) NSTimeInterval activateTime;
 @end
 

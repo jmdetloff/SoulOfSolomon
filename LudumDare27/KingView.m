@@ -8,12 +8,16 @@
 
 #import "KingView.h"
 
-@implementation KingView
+@implementation KingView {
+    BOOL _soulless;
+}
 
 static NSString * const kKingIdleDownKey = @"kKingIdleDownKey";
 static NSString * const kKingIdleUpKey = @"kKingIdleUpKey";
 static NSString * const kKingRunUpKey = @"kKingRunUpKey";
 static NSString * const kKingRunDownKey = @"kKingRunDownKey";
+static NSString * const kKingSoullessUpKey = @"kKingSoullessUpKey";
+static NSString * const kKingSoullessDownKey = @"kKingSoullessDownKey";
 
 
 - (id)initWithFrame:(CGRect)frame {
@@ -48,10 +52,18 @@ static NSString * const kKingRunDownKey = @"kKingRunDownKey";
                             [UIImage imageNamed:@"solomon_idle_down0002.png"],
                             [UIImage imageNamed:@"solomon_idle_down0003.png"]];
         
+        NSArray *soullessUp = @[[UIImage imageNamed:@"solomon_soulless_up0000"],
+                                [UIImage imageNamed:@"solomon_soulless_up0001"]];
+        
+        NSArray *soullessDown = @[[UIImage imageNamed:@"solomon_soulless_down0000"],
+                                [UIImage imageNamed:@"solomon_soulless_down0001"]];
+        
         [self setAnimation:runDown duration:1.2 forKey:kKingRunDownKey];
         [self setAnimation:runUp duration:1.2 forKey:kKingRunUpKey];
         [self setAnimation:idleDown duration:0.6 forKey:kKingIdleDownKey];
         [self setAnimation:idleUp duration:0.6 forKey:kKingIdleUpKey];
+        [self setAnimation:soullessDown duration:1 forKey:kKingSoullessDownKey];
+        [self setAnimation:soullessUp duration:1 forKey:kKingSoullessUpKey];
         
         [self reachedDestination];
         
@@ -92,6 +104,8 @@ static NSString * const kKingRunDownKey = @"kKingRunDownKey";
 
 
 - (void)updateAnimation {
+    if (_soulless) return;
+    
     if (_moving && _facingUp) {
         [self setAnimationToAnimationWithKey:kKingRunUpKey];
     } else if(_moving && !_facingUp) {
@@ -103,5 +117,33 @@ static NSString * const kKingRunDownKey = @"kKingRunDownKey";
     }
 }
 
+
+- (void)goSoulless:(BOOL)soulless {
+    _soulless = soulless;
+    if (soulless) {
+        if (_facingUp) {
+            [self setAnimationToAnimationWithKey:kKingSoullessUpKey];
+        } else {
+            [self setAnimationToAnimationWithKey:kKingSoullessDownKey];
+        }
+    } else {
+        [self updateAnimation];
+    }
+}
+
+
+
+
+- (void)setCenter:(CGPoint)center {
+    center.y -= self.frame.size.height/2;
+    [super setCenter:center];
+}
+
+
+- (CGPoint)center {
+    CGPoint point = [super center];
+    point.y += self.frame.size.height/2;
+    return point;
+}
 
 @end

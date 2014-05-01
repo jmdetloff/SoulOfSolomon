@@ -15,4 +15,6 @@
 @property (nonatomic, assign) BOOL facingLeft;
 @property (nonatomic, assign) BOOL moving;
 
+- (void)goSoulless:(BOOL)soulless;
+
 @end

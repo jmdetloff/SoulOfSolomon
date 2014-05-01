@@ -9,6 +9,7 @@
 #import "Level.h"
 #import "LevelGenerator.h"
 #import "KeyView.h"
+#import "BellView.h"
 
 @implementation LevelGenerator
 
@@ -35,9 +36,9 @@
 
 
 
-+ (Level *)getLevelOne {
++ (Level *)getLevelTwo {
     Level *level = [[Level alloc] init];
-    level.index = 1;
+    level.index = 2;
     
     level.kingStartPosition = CGPointMake(.125*1024, .25*748);
     
@@ -73,7 +74,7 @@
     Wall *wall3 = [[Wall alloc] init];
     wall3.startPoint = CGPointMake(.75*1024, 0);
     wall3.endPoint = CGPointMake(.75*1024, 748);
-    wall3.doors = [@[[[Door alloc] initWithLocation:12], [[Door alloc] initWithLocation:40]] mutableCopy];
+    wall3.doors = [@[[[Door alloc] initWithLocation:17], [[Door alloc] initWithLocation:50]] mutableCopy];
     wall3.vertical = YES;
     [walls addObject:wall3];
     
@@ -84,8 +85,8 @@
     [walls addObject:wall4];
 
     Wall *wall5 = [[Wall alloc] init];
-    wall5.startPoint = CGPointMake(.50*1024, .25*748);
-    wall5.endPoint = CGPointMake(.75*1024, .25*748);
+    wall5.startPoint = CGPointMake(.50*1024, .38*748);
+    wall5.endPoint = CGPointMake(.75*1024, .38*748);
     
     Door *door = [[Door alloc] initWithLocation:50];
     door.isSticky = YES;
@@ -124,8 +125,8 @@
     [guards addObject:guard4];
     
     Guard *guard5 = [[Guard alloc] init];
-    guard5.startPoint = CGPointMake(.9*1024, .40*748);
-    guard5.endPoint = CGPointMake(.9*1024, .40*748);
+    guard5.startPoint = CGPointMake(.9*1024, .50*748);
+    guard5.endPoint = CGPointMake(.9*1024, .50*748);
     guard5.initialAngle = M_PI;
     [guards addObject:guard5];
     
@@ -161,39 +162,23 @@
     [lights addObject:light1];
     
     Light *light2 = [[Light alloc] init];
-    light2.location = CGPointMake(0.875*1024, 30);
+    light2.location = CGPointMake(924, 130);
     light2.zone = CGRectMake(0.75*1024, 0, 0.25*1024, 748);
     [lights addObject:light2];
     
     level.lights = lights;
     
-    NSMutableArray *stallers = [[NSMutableArray alloc] init];
+    level.numCoins = 3;
     
-    Staller *staller1 = [[Staller alloc] init];
-    staller1.location = CGPointMake(0.625*1024, .875*748);
-    [stallers addObject:staller1];
-    
-    Staller *staller2 = [[Staller alloc] init];
-    staller2.location = CGPointMake(0.625*1024, .75*748);
-    [stallers addObject:staller2];
-    
-    Staller *staller3 = [[Staller alloc] init];
-    staller3.location = CGPointMake(0.625*1024, .625*748);
-    [stallers addObject:staller3];
-    
-    Staller *staller4 = [[Staller alloc] init];
-    staller4.location = CGPointMake(0.625*1024, .125*748);
-    [stallers addObject:staller4];
-    
-    level.stallers = stallers;
+    level.winZone = CGRectMake(.75*1024, .9*748, .25*1024, .1*748);
     
     return level;
 }
 
 
-+ (Level *)getLevelTwo {
++ (Level *)getLevelOne {
     Level *level = [[Level alloc] init];
-    level.index = 2;
+    level.index = 1;
     
     level.kingStartPosition = CGPointMake(35, .75*748);
 
@@ -243,9 +228,9 @@
     [guards addObject:guard3];
 
     Guard *guard5 = [[Guard alloc] init];
-    guard5.startPoint = CGPointMake(.85*1024, .1*748);
-    guard5.endPoint = CGPointMake(.85*1024, .1*748);
-    guard5.initialAngle = M_PI;
+    guard5.startPoint = CGPointMake(.85*1024, .8*748);
+    guard5.endPoint = CGPointMake(.85*1024, .8*748);
+    guard5.initialAngle = M_PI/2;
     [guards addObject:guard5];
     
     level.guards = guards;
@@ -263,27 +248,15 @@
     NSMutableArray *lights = [[NSMutableArray alloc] init];
 
     Light *light1 = [[Light alloc] init];
-    light1.location = CGPointMake(0.85*1024, 700);
+    light1.location = CGPointMake(0.85*1024, 110);
     light1.zone = CGRectMake(0.66*1024, 0, 0.33*1024 + 20, 748);
     [lights addObject:light1];
 
     level.lights = lights;
     
-    NSMutableArray *stallers = [[NSMutableArray alloc] init];
-
-    Staller *staller1 = [[Staller alloc] init];
-    staller1.location = CGPointMake(541, 470);
-    [stallers addObject:staller1];
+    level.numCoins = 3;
     
-    Staller *staller2 = [[Staller alloc] init];
-    staller2.location = CGPointMake(495, 495);
-    [stallers addObject:staller2];
-
-    Staller *staller3 = [[Staller alloc] init];
-    staller3.location = CGPointMake(456, 516);
-    [stallers addObject:staller3];
-    
-    level.stallers = stallers;
+    level.winZone = CGRectMake(.75*1024, .9*748, .25*1024, .1*748);
     
     return level;
 
@@ -295,29 +268,9 @@
 }
 
 
-+ (GTMultiSpriteView *)genericMakerView {
-    GTMultiSpriteView *makerView = [[GTMultiSpriteView alloc]initWithFrame:CGRectMake(0, 0, 20, 20)];
-    makerView.image = [LevelGenerator noiseMakerImage];
++ (BellView *)genericMakerView {
+    BellView *makerView = [[BellView alloc]initWithFrame:CGRectMake(0, 0, 64, 64)];
     return makerView;
-}
-
-
-+ (UIImage *)noiseMakerImage {
-    UIBezierPath *path = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, 20, 20)];
-    
-    UIImage *glyphImage;
-    
-    UIGraphicsBeginImageContext(CGSizeMake(20, 20));
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetFillColorWithColor(context, (open ? [UIColor greenColor].CGColor : [UIColor redColor].CGColor));
-    
-    path.lineWidth = 1;
-    [path fill];
-    
-    glyphImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return glyphImage;
 }
 
 
