@@ -1,7 +1,7 @@
 SoulOfSolomon
 =============
 
-Video Demo: http://youtu.be/bo2w9G-At9Q
+Video Demo: https://www.youtube.com/watch?v=2DaJ8e_85Tg
 
 Soul Of Solomon is the Ludume Dare 27 submission I build with Tyriq Plummer (http://www.fourbitfriday.com/) The theme of this jam was
 10 seconds, so we built a puzzle game where the user must manipulate his environment using astral projection to navigate a maze.
